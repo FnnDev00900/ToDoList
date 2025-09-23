@@ -2,7 +2,10 @@ package com.fnndev.todolist.di
 
 import android.content.Context
 import androidx.room.Room
+import com.fnndev.todolist.data.local.TaskDao
 import com.fnndev.todolist.data.local.TaskDatabase
+import com.fnndev.todolist.data.repository.TaskRepository
+import com.fnndev.todolist.data.repository.TaskRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,5 +29,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTaskDao(db: TaskDatabase) = db.dao
+
+    @Provides
+    @Singleton
+    fun provideTaskRepository(dao: TaskDao): TaskRepository = TaskRepositoryImpl(dao)
 
 }
