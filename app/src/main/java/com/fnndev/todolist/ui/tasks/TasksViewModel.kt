@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TasksViewModel @Inject constructor(private val repository: TaskRepository) : ViewModel() {
 
-    val tasks = repository.getAllTasks()
+    val taskList = repository.getAllTasks()
 
     fun onEvent(event: TasksScreenEvents) {
         when (event) {
