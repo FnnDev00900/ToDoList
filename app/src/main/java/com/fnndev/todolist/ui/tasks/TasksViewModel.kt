@@ -2,6 +2,7 @@ package com.fnndev.todolist.ui.tasks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.util.copy
 import com.fnndev.todolist.data.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,7 @@ class TasksViewModel @Inject constructor(private val repository: TaskRepository)
 
             is TasksScreenEvents.OnIsDoneChange -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    repository.upsertTask(event.task.copy(isCompleted = !event.task.isCompleted))
+                    repository.upsertTask(event.task)
                 }
             }
 
