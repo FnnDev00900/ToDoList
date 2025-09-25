@@ -14,7 +14,7 @@ fun SetupNavGraph(navController: NavHostController) {
             TasksScreen(navController)
         }
         composable(route = Screens.AddEditTaskScreen.route) {
-            TaskAddEditScreen()
+            TaskAddEditScreen(navController)
         }
     }
 }
