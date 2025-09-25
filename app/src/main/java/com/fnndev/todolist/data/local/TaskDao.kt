@@ -13,7 +13,7 @@ interface TaskDao {
     fun getAllTasks(): Flow<List<Task>>
 
     @Query("SELECT * FROM tasks WHERE id = :id")
-    suspend fun getTaskById(id: Int): Task?
+    fun getTaskById(id: Int): Flow<Task?>
 
     @Upsert()
     suspend fun upsertTask(task: Task)

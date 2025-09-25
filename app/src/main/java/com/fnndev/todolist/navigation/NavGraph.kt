@@ -1,9 +1,12 @@
 package com.fnndev.todolist.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavArgs
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.fnndev.todolist.ui.add_edit_task.TaskAddEditScreen
 import com.fnndev.todolist.ui.tasks.TasksScreen
 
@@ -13,8 +16,17 @@ fun SetupNavGraph(navController: NavHostController) {
         composable(route = Screens.TasksScreen.route) {
             TasksScreen(navController)
         }
-        composable(route = Screens.AddEditTaskScreen.route) {
-            TaskAddEditScreen(navController)
+        composable(
+            route = Screens.AddEditTaskScreen.route + "/{taskId}",
+            arguments = listOf(
+                navArgument(name = "taskId"){
+                    type = NavType.IntType
+                    defaultValue = -1
+                }
+            )
+        ) {
+            val taskId = it.arguments?.getInt("taskId")
+            TaskAddEditScreen(navController = navController,taskId = taskId!!)
         }
     }
 }

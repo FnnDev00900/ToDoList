@@ -1,5 +1,6 @@
 package com.fnndev.todolist.ui.tasks
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +27,12 @@ fun TaskItem(task: Task, onEvent: (TasksScreenEvents) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 10.dp),
+            .padding(vertical = 8.dp, horizontal = 10.dp)
+            .clickable(
+                onClick = {
+                    onEvent(TasksScreenEvents.OnTaskClick(task))
+                }
+            ),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(Color.White)
     ) {
@@ -56,10 +62,4 @@ fun TaskItem(task: Task, onEvent: (TasksScreenEvents) -> Unit) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun TaskItemPreview() {
-    TaskItem(task = Task(title = "Task 1", description = "Description 1"), onEvent = {})
 }

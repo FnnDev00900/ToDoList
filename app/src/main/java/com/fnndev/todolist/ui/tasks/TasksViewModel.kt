@@ -7,13 +7,15 @@ import com.fnndev.todolist.navigation.Screens
 import com.fnndev.todolist.utils.UiEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class TasksViewModel @Inject constructor(private val repository: TaskRepository) : ViewModel() {
+class TasksViewModel @Inject constructor(
+    private val repository: TaskRepository,
+) : ViewModel() {
 
     val taskList = repository.getAllTasks()
 
@@ -24,7 +26,7 @@ class TasksViewModel @Inject constructor(private val repository: TaskRepository)
         when (event) {
 
             TasksScreenEvents.OnAddTaskClick -> {
-                sendUiEvent(UiEvents.Navigate(Screens.AddEditTaskScreen.route))
+                sendUiEvent(UiEvents.Navigate(Screens.AddEditTaskScreen.withArgs("-1")))
             }
 
             is TasksScreenEvents.OnDeleteTask -> {
@@ -39,7 +41,9 @@ class TasksViewModel @Inject constructor(private val repository: TaskRepository)
                 }
             }
 
-            is TasksScreenEvents.OnTaskClick -> TODO()
+            is TasksScreenEvents.OnTaskClick -> {
+                sendUiEvent(UiEvents.Navigate(Screens.AddEditTaskScreen.withArgs(event.task.id.toString())))
+            }
         }
     }
 

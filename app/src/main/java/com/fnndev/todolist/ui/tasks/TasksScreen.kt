@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.fnndev.todolist.navigation.Screens
 import com.fnndev.todolist.utils.UiEvents
 
 @Composable
@@ -25,7 +24,7 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltVi
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is UiEvents.Navigate -> navController.navigate(Screens.AddEditTaskScreen.route)
+                is UiEvents.Navigate -> navController.navigate(event.route)
                 else -> Unit
             }
         }

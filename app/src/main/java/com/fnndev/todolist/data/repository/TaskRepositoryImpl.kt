@@ -11,7 +11,7 @@ class TaskRepositoryImpl @Inject constructor(private val taskDao: TaskDao) : Tas
         return taskDao.getAllTasks()
     }
 
-    override suspend fun getTaskById(id: Int): Task? {
+    override fun getTaskById(id: Int): Flow<Task?> {
         return taskDao.getTaskById(id)
     }
 

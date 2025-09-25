@@ -36,9 +36,13 @@ import com.fnndev.todolist.utils.UiEvents
 @Composable
 fun TaskAddEditScreen(
     navController: NavController,
+    taskId: Int,
     viewModel: TaskAddEditViewModel = hiltViewModel()
 ) {
 
+    LaunchedEffect(taskId) {
+        viewModel.updateTaskId(taskId)
+    }
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { events ->
             when (events) {
