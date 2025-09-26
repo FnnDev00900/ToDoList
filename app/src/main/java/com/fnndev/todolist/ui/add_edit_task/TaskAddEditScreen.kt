@@ -17,9 +17,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +44,8 @@ fun TaskAddEditScreen(
     viewModel: TaskAddEditViewModel = hiltViewModel()
 ) {
 
+    val snackBarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(taskId) {
         viewModel.updateTaskId(taskId)
     }
@@ -50,12 +56,24 @@ fun TaskAddEditScreen(
                     navController.popBackStack()
                 }
 
+                is UiEvents.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(
+                        events.message, events.action,
+                        withDismissAction = true, duration = SnackbarDuration.Short
+                    )
+                }
+
                 else -> Unit
             }
         }
     }
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        }
+    ) { innerPadding ->
         Card(
             modifier = Modifier
                 .fillMaxSize()
@@ -123,7 +141,6 @@ fun TaskAddEditScreen(
 
                 Button(onClick = {
                     viewModel.onEvent(TaskAddEditEvents.OnSaveTask)
-
                 }) {
                     Text(text = "Save")
                 }

@@ -18,9 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TaskAddEditViewModel @Inject constructor(
-    private val repository: TaskRepository, savedStateHandle: SavedStateHandle
-) :
-    ViewModel() {
+    private val repository: TaskRepository
+) : ViewModel() {
 
     private var selectedTask: Task? = null
 
@@ -66,6 +65,7 @@ class TaskAddEditViewModel @Inject constructor(
                             description = descriptionState.value
                         )
                         repository.upsertTask(task)
+                        sendUiEvent(UiEvents.ShowSnackBar(message = "Task Added"))
                     }
                 } else {
                     viewModelScope.launch(Dispatchers.IO) {
@@ -76,10 +76,10 @@ class TaskAddEditViewModel @Inject constructor(
                             isCompleted = selectedTask!!.isCompleted
                         )
                         repository.upsertTask(task)
+                        sendUiEvent(UiEvents.ShowSnackBar(message = "Task Updated"))
                     }
                 }
                 sendUiEvent(UiEvents.PopBackStack)
-
             }
         }
     }
