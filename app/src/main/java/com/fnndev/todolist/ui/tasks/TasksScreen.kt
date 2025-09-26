@@ -1,23 +1,39 @@
 package com.fnndev.todolist.ui.tasks
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.fnndev.todolist.models.Task
 import com.fnndev.todolist.utils.UiEvents
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
+@SuppressLint("FlowOperatorInvokedInComposition")
 @Composable
 fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltViewModel()) {
 
@@ -30,7 +46,8 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltVi
         }
     }
 
-    val listTask = viewModel.taskList.collectAsState(initial = emptyList())
+    val filteredListTask = viewModel.filteredListTask.collectAsState()
+    val searchText = viewModel.searchText.collectAsState()
 
     Scaffold(modifier = Modifier.fillMaxSize(), floatingActionButton = {
         FloatingActionButton(
@@ -49,9 +66,47 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltVi
                     bottom = innerPadding.calculateBottomPadding() + 2.dp
                 )
         ) {
-            items(items = listTask.value) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    SearchBar(
+                        modifier = Modifier.fillMaxWidth(0.95f),
+                        text = searchText.value,
+                        onTextChange = viewModel::onEvent
+                    )
+                }
+
+            }
+            items(items = filteredListTask.value) {
                 TaskItem(task = it, onEvent = viewModel::onEvent)
             }
         }
     }
+}
+
+@Composable
+fun SearchBar(
+    text: String,
+    onTextChange: (TasksScreenEvents) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            onTextChange(TasksScreenEvents.OnSearchTextChange(it))
+            2
+        },
+        modifier = modifier,
+        label = {
+            Text(text = "Search")
+        },
+        singleLine = true,
+        maxLines = 1,
+        trailingIcon = {
+            Icon(imageVector = Icons.Default.Search, contentDescription = "")
+        }
+    )
 }
