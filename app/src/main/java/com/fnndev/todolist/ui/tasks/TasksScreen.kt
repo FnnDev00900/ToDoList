@@ -1,6 +1,8 @@
 package com.fnndev.todolist.ui.tasks
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
@@ -22,6 +25,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,9 +39,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-@SuppressLint("FlowOperatorInvokedInComposition")
+@SuppressLint("FlowOperatorInvokedInComposition", "RememberInComposition")
 @Composable
 fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltViewModel()) {
+
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
@@ -53,6 +61,7 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltVi
         FloatingActionButton(
             onClick = {
                 viewModel.onEvent(TasksScreenEvents.OnAddTaskClick)
+                focusManager.clearFocus()
             }
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "")
@@ -65,6 +74,9 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltVi
                     top = innerPadding.calculateTopPadding() + 2.dp,
                     bottom = innerPadding.calculateBottomPadding() + 2.dp
                 )
+                .clickable(
+                    indication = null, interactionSource = MutableInteractionSource(),
+                    onClick = { focusManager.clearFocus() })
         ) {
             item {
                 Row(
@@ -107,6 +119,10 @@ fun SearchBar(
         maxLines = 1,
         trailingIcon = {
             Icon(imageVector = Icons.Default.Search, contentDescription = "")
-        }
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Search
+        )
     )
 }
