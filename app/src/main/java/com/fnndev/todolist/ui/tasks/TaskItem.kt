@@ -12,12 +12,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fnndev.todolist.models.Task
@@ -58,7 +58,13 @@ fun TaskItem(task: Task, onEvent: (TasksScreenEvents) -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = task.description ?: "", fontSize = 14.sp, color = Color.Gray)
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "")
+                IconButton(
+                    onClick = {
+                        onEvent(TasksScreenEvents.OnDeleteTask(task))
+                    }
+                ) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "")
+                }
             }
         }
     }
