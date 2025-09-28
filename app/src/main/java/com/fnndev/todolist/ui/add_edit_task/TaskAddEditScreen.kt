@@ -43,9 +43,6 @@ fun TaskAddEditScreen(
     taskId: Int,
     viewModel: TaskAddEditViewModel = hiltViewModel()
 ) {
-
-    val snackBarHostState = remember { SnackbarHostState() }
-
     LaunchedEffect(taskId) {
         viewModel.updateTaskId(taskId)
     }
@@ -56,23 +53,13 @@ fun TaskAddEditScreen(
                     navController.popBackStack()
                 }
 
-                is UiEvents.ShowSnackBar -> {
-                    snackBarHostState.showSnackbar(
-                        events.message, events.action,
-                        withDismissAction = true, duration = SnackbarDuration.Short
-                    )
-                }
-
                 else -> Unit
             }
         }
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        }
+        modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         Card(
             modifier = Modifier

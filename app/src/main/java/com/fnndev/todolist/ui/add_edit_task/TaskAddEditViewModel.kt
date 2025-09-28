@@ -1,7 +1,6 @@
 package com.fnndev.todolist.ui.add_edit_task
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fnndev.todolist.data.repository.TaskRepository
@@ -65,7 +64,6 @@ class TaskAddEditViewModel @Inject constructor(
                             description = descriptionState.value
                         )
                         repository.upsertTask(task)
-                        sendUiEvent(UiEvents.ShowSnackBar(message = "Task Added"))
                     }
                 } else {
                     viewModelScope.launch(Dispatchers.IO) {
@@ -76,7 +74,6 @@ class TaskAddEditViewModel @Inject constructor(
                             isCompleted = selectedTask!!.isCompleted
                         )
                         repository.upsertTask(task)
-                        sendUiEvent(UiEvents.ShowSnackBar(message = "Task Updated"))
                     }
                 }
                 sendUiEvent(UiEvents.PopBackStack)

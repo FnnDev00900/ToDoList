@@ -18,10 +18,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -37,11 +41,22 @@ import com.fnndev.todolist.utils.UiEvents
 fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltViewModel()) {
 
     val focusManager = LocalFocusManager.current
-
-    LaunchedEffect(Unit) {
+    val snackBarState = remember {
+        SnackbarHostState()
+    }
+    LaunchedEffect(true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvents.Navigate -> navController.navigate(event.route)
+                is UiEvents.ShowSnackBar -> {
+                    snackBarState.showSnackbar(
+                        message = event.message,
+                        actionLabel = event.action,
+                        duration = SnackbarDuration.Short,
+                        withDismissAction = true
+                    )
+                }
+
                 else -> Unit
             }
         }
@@ -50,16 +65,22 @@ fun TasksScreen(navController: NavController, viewModel: TasksViewModel = hiltVi
     val filteredListTask = viewModel.filteredListTask.collectAsState()
     val searchText = viewModel.searchText.collectAsState()
 
-    Scaffold(modifier = Modifier.fillMaxSize(), floatingActionButton = {
-        FloatingActionButton(
-            onClick = {
-                viewModel.onEvent(TasksScreenEvents.OnAddTaskClick)
-                focusManager.clearFocus()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    viewModel.onEvent(TasksScreenEvents.OnAddTaskClick)
+                    focusManager.clearFocus()
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "")
             }
-        ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "")
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarState)
         }
-    }) { innerPadding ->
+    ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
